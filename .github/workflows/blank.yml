@@ -1,0 +1,38 @@
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main  # or your preferred branch
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'  # Adjust to the version you're using
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build the solution
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish the Web API
+      run: dotnet publish -c Release -o publish
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
+        publish-profile: ${{ secrets.AZURE_APP_SERVICE_CREDENTIALS }}
+        package: publish
+
+    - name: Clean up the build
+      run: rm -rf publish
