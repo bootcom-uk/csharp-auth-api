@@ -21,6 +21,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
+    - name: Replace Variables in appsettings.json
+      uses: Nambers/ReplaceStringInFile@v1.3
+      with:
+        path: "D:\\\\a\\\\home\\\\home\\\\Mobile\\\\Mobile\\\\appsettings.json"
+        oldString: "{{SENTRY_DSN}}"
+        newString: "${{secrets.SENTRY_DSN}}"
+        showFileContent: true
+
     - name: Build the solution
       run: dotnet build --configuration Release --no-restore
 
