@@ -49,6 +49,9 @@ Generated\ Files/
 TestResult.xml
 nunit-*.xml
 
+# Dev app settings
+appsettings.Development.json
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/
