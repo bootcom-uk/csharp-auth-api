@@ -15,7 +15,7 @@ var stream = null as Stream;
 
 var configurationBuilder = builder.Configuration.AddJsonStream(stream!);
 
-configurationBuilder.Build().Get<>
+// configurationBuilder.Build().Get<>
 
 builder.WebHost.UseSentry(options =>
 {
