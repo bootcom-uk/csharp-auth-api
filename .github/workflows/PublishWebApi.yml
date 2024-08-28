@@ -29,6 +29,22 @@ jobs:
         newString: "${{secrets.SENTRY_DSN}}"
         showFileContent: true
 
+    - name: Replace Variables in appsettings.json
+      uses: Nambers/ReplaceStringInFile@v1.3
+      with:
+        path: "D:\\\\a\\\\home\\\\home\\\\Mobile\\\\Mobile\\\\appsettings.json"
+        oldString: "{{MONGO_CONNECTIONSTRING}}"
+        newString: "${{secrets.MONGO_CONNECTIONSTRING}}"
+        showFileContent: true
+
+    - name: Replace Variables in appsettings.json
+      uses: Nambers/ReplaceStringInFile@v1.3
+      with:
+        path: "D:\\\\a\\\\home\\\\home\\\\Mobile\\\\Mobile\\\\appsettings.json"
+        oldString: "{{MONGO_DATABASE}}"
+        newString: "${{secrets.MONGO_DATABASE}}"
+        showFileContent: true
+
     - name: Build the solution
       run: dotnet build --configuration Release --no-restore
 
