@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Models;
+using MongoDB.Bson;
 
 namespace API.Interfaces
 {

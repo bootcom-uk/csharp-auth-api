@@ -1,4 +1,5 @@
-﻿using API.Interfaces;
+﻿using API.Configuration;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,12 +13,12 @@ namespace API.Controllers
 
         internal readonly IDatabaseService _databaseService;
 
-        internal readonly IConfiguration _configuration;
+        internal readonly AuthConfiguration _authConfiguration;
 
         public BaseController(IDatabaseService databaseService, IConfiguration configuration)
         {
             _databaseService = databaseService;
-            _configuration = configuration;
+            _authConfiguration = configuration.Get<AuthConfiguration>()!;
         }
 
     }

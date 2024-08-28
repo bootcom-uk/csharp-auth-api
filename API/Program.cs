@@ -1,26 +1,27 @@
+using API.Configuration;
+using API.Interfaces;
+using API.Services;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-var assembly = Assembly.GetExecutingAssembly();
-var assemblyName = assembly.GetName().Name;
-var stream = null as Stream;
+var appsettingsFile = null as string;
 
 #if DEBUG
-    stream = assembly.GetManifestResourceStream($"{assemblyName}.appsettings.Development.json");
+appsettingsFile = "appsettings.Development.json";
 #else
-    stream = assembly.GetManifestResourceStream($"{assemblyName}.appsettings.json");
+    appsettingsFile= "appsettings.json";
 #endif
 
-var configurationBuilder = builder.Configuration.AddJsonStream(stream!);
+var configurationBuilder = builder.Configuration.AddJsonFile(appsettingsFile);
 
-// configurationBuilder.Build().Get<>
+var authConfiguration = configurationBuilder.Build().Get<AuthConfiguration>();
 
 builder.WebHost.UseSentry(options =>
 {
     // A DSN is required.  You can set it here, or in configuration, or in an environment variable.
-    options.Dsn = "https://eb18e953812b41c3aeb042e666fd3b5c@o447951.ingest.sentry.io/5428537";
+    options.Dsn = authConfiguration!.Sentry.Dsn;
 
     // Enable Sentry performance monitoring
     options.TracesSampleRate = 1.0;
@@ -33,6 +34,9 @@ builder.WebHost.UseSentry(options =>
 
 // Add services to the container.
 
+builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+builder.Services.AddSingleton<RefreshTokenService>();
+builder.Services.AddSingleton<AuthTokenService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

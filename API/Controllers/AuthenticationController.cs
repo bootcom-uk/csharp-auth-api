@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using API.Interfaces;
+using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,15 +9,12 @@ namespace API.Controllers
     public class AuthenticationController : BaseController
     {
 
-        private readonly IEmailProviderService _emailProviderService;
-
         private readonly RefreshTokenService _refreshTokenService;
 
         private readonly AuthTokenService _authTokenService;
 
-        public AuthenticationController(IDatabaseService databaseService, IConfiguration configuration, IEmailProviderService emailProviderService, RefreshTokenService refreshTokenService, AuthTokenService authTokenService) : base(databaseService, configuration)
+        public AuthenticationController(IDatabaseService databaseService, IConfiguration configuration, RefreshTokenService refreshTokenService, AuthTokenService authTokenService) : base(databaseService, configuration)
         {
-            _emailProviderService = emailProviderService;
             _refreshTokenService = refreshTokenService;
             _authTokenService = authTokenService;
         }
@@ -49,6 +48,7 @@ namespace API.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> RequestToken([FromHeader(Name = "EmailAddress")] string emailAddress, [FromHeader(Name = "DeviceId")] Guid deviceId)
         {
             var user = await _databaseService.GetUserByEmailAddress(emailAddress);
@@ -63,11 +63,11 @@ namespace API.Controllers
             // not activated we need to send a welcome email
             if (user is null || !user.EmailAddressConfirmed)
             {
-                await _emailProviderService.Send(_configuration["EXCHANGE_EMAIL_NO_REPLY_FROM"]!, "Welcome To BootCom", _configuration["EMAIL_TEMPLATE_WELCOME"]!, new Dictionary<string, string>(), new List<Exchange365EmailRecipient>()
-            {
-                { new() { Contact = emailAddress, Name = emailAddress} }
-            });
-                return Unauthorized();
+            //    await _emailProviderService.Send(_configuration["EXCHANGE_EMAIL_NO_REPLY_FROM"]!, "Welcome To BootCom", _configuration["EMAIL_TEMPLATE_WELCOME"]!, new Dictionary<string, string>(), new List<Exchange365EmailRecipient>()
+            //{
+            //    { new() { Contact = emailAddress, Name = emailAddress} }
+            //});
+                return NotFound();
             }
 
             var accessCodeRequest = await _databaseService.SendAuthToken(emailAddress, deviceId);
@@ -77,15 +77,15 @@ namespace API.Controllers
                 return Unauthorized();
             }
 
-            await _emailProviderService.Send(_configuration["EXCHANGE_EMAIL_NO_REPLY_FROM"]!, "Login To BootCom", _configuration["EMAIL_TEMPLATE_LOGIN"]!, new Dictionary<string, string>()
-            {
-                { "{{BASE_URL}}", _configuration["WEBSITE_BOOTCOM_LOGIN_BASE_URL"]!},
-                { "{{ACCESS_CODE}}", accessCodeRequest!.QuickAccessCode},
-                { "{{LOGIN_CODE}}", accessCodeRequest!.LoginCode.ToString()}
-            }, new List<Exchange365EmailRecipient>()
-            {
-                { new() { Contact = emailAddress, Name = emailAddress} }
-            });
+            //await _emailProviderService.Send(_configuration["EXCHANGE_EMAIL_NO_REPLY_FROM"]!, "Login To BootCom", _configuration["EMAIL_TEMPLATE_LOGIN"]!, new Dictionary<string, string>()
+            //{
+            //    { "{{BASE_URL}}", _configuration["WEBSITE_BOOTCOM_LOGIN_BASE_URL"]!},
+            //    { "{{ACCESS_CODE}}", accessCodeRequest!.QuickAccessCode},
+            //    { "{{LOGIN_CODE}}", accessCodeRequest!.LoginCode.ToString()}
+            //}, new List<Exchange365EmailRecipient>()
+            //{
+            //    { new() { Contact = emailAddress, Name = emailAddress} }
+            //});
 
 
             return NoContent();
