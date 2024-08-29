@@ -51,6 +51,7 @@ namespace API.Services
         {
             var database = GetMongoDatabase();
             if (database is null) return null;
+
             var accessCodeCollection = database.GetCollection<AccessCodeRequest>(nameof(AccessCodeRequest));
 
             // If we don't find the access code associated to the device return null, otherwise 
@@ -65,12 +66,6 @@ namespace API.Services
             await accessCodeCollection.DeleteOneAsync(record => record.QuickAccessCode == accessCode && record.DeviceId == deviceId);
 
             var user = await GetUserByEmailAddress(requestDoc.EmailAddress);
-
-            if (user is null)
-            {
-                return null;
-            }
-
 
             return user;
 

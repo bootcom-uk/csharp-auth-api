@@ -8,9 +8,9 @@ namespace Models
 
         public ObjectId Id { get; set; }
 
-        public required string EmailAddress { get; set; }
+        public string EmailAddress { get; set; }
 
-        public required string QuickAccessCode { get; set; }
+        public string QuickAccessCode { get; set; }
 
         public Guid LoginCode { get; set; }
 
