@@ -45,6 +45,30 @@ jobs:
           newString: "${{secrets.MONGO_DATABASE}}"
           showFileContent: true
 
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{JWT_AUDIENCE}}"
+          newString: "${{secrets.JWT_AUDIENCE}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{JWT_ISSUER}}"
+          newString: "${{secrets.JWT_ISSUER}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{JWT_SECRET_KEY}}"
+          newString: "${{secrets.JWT_SECRET_KEY}}"
+          showFileContent: true
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
