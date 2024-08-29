@@ -7,5 +7,7 @@
 
         public required MongoConfiguration Mongo { get; set; }
 
+        public required TokenConfiguration Token { get; set; }
+
     }
 }

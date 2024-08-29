@@ -1,4 +1,5 @@
-﻿using Extensions.Web;
+﻿using API.Configuration;
+using Extensions.Web;
 using Microsoft.IdentityModel.Tokens;
 using Models;
 using System.Security.Claims;
@@ -8,9 +9,10 @@ namespace API.Services
     public class AuthTokenService
     {
 
-        private IConfiguration _configuration;
-        public AuthTokenService(IConfiguration configuration) { 
-        _configuration = configuration; 
+        internal readonly AuthConfiguration _authConfiguration;
+
+        public AuthTokenService(IConfiguration configuration) {
+            _authConfiguration = configuration.Get<AuthConfiguration>()!; 
         }
 
         public string CreateToken(User user)
@@ -20,9 +22,9 @@ namespace API.Services
                 .AddClaim(ClaimTypes.Name, user!.Name)
                 .AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString())
                 .SetExpiry(DateTime.UtcNow.AddMinutes(15))                
-                .SetKey(_configuration["JWT_SECRET_KEY"]!)
-                .SetAudience(_configuration["JWT_AUDIENCE"]!)
-                .SetIssuer(_configuration["JWT_ISSUER"]!)
+                .SetKey(_authConfiguration.Token.Secret)
+                .SetAudience(_authConfiguration.Token.Audience)
+                .SetIssuer(_authConfiguration.Token.Issuer)
                 .CreateToken();
         }
 

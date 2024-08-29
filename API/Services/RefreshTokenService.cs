@@ -7,12 +7,6 @@ namespace API.Services
     public class RefreshTokenService
     {
 
-        private readonly IConfiguration _configuration;
-
-        public RefreshTokenService(IConfiguration configuration) { 
-            _configuration = configuration;
-        }
-
         public RefreshToken CreateRefreshToken(User user, string token, Guid deviceId)
         {
             
