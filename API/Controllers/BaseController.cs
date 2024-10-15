@@ -1,5 +1,6 @@
 ﻿using API.Configuration;
 using API.Interfaces;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,17 @@ namespace API.Controllers
     public class BaseController : ControllerBase
     {
 
-        internal readonly IDatabaseService _databaseService;
+        internal readonly MongoDatabaseService _databaseService;
 
-        internal readonly AuthConfiguration _authConfiguration;
+        internal readonly APIConfiguration _configuration;
 
-        public BaseController(IDatabaseService databaseService, IConfiguration configuration)
+        internal readonly EmailProviderService _emailProviderService;
+
+        public BaseController(MongoDatabaseService databaseService, IConfiguration configuration, EmailProviderService emailProviderService)
         {
             _databaseService = databaseService;
-            _authConfiguration = configuration.Get<AuthConfiguration>()!;
+            _configuration = configuration.Get<APIConfiguration>()!;
+            _emailProviderService = emailProviderService;
         }
 
     }
