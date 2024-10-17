@@ -65,8 +65,80 @@ jobs:
         uses: Nambers/ReplaceStringInFile@v1.3
         with:
           path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
-          oldString: "{{JWT_SECRET_KEY}}"
-          newString: "${{secrets.JWT_SECRET_KEY}}"
+          oldString: "{{JWT_SIGNING_PRIVATE_KEY}}"
+          newString: "${{secrets.JWT_SIGNING_PRIVATE_KEY}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{JWT_SIGNING_PUBLIC_KEY}}"
+          newString: "${{secrets.JWT_SIGNING_PUBLIC_KEY}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EXCHANGE_EMAIL_NO_REPLY_FROM}}"
+          newString: "${{secrets.EXCHANGE_EMAIL_NO_REPLY_FROM}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EMAIL_TEMPLATE_LOGIN}}"
+          newString: "${{secrets.EMAIL_TEMPLATE_LOGIN}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{WEBSITE_BOOTCOM_LOGIN_BASE_URL}}"
+          newString: "${{secrets.WEBSITE_BOOTCOM_LOGIN_BASE_URL}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EXCHANGE_EMAIL_SERVER}}"
+          newString: "${{secrets.EXCHANGE_EMAIL_SERVER}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EXCHANGE_EMAIL_SERVER_PORT}}"
+          newString: "${{secrets.EXCHANGE_EMAIL_SERVER_PORT}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EXCHANGE_EMAIL_SERVER_USE_SSL}}"
+          newString: "${{secrets.EXCHANGE_EMAIL_SERVER_USE_SSL}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EXCHANGE_EMAIL_NOREPLY_USERNAME}}"
+          newString: "${{secrets.EXCHANGE_EMAIL_NOREPLY_USERNAME}}"
+          showFileContent: true
+
+      - name: Replace Variables in appsettings.json
+        uses: Nambers/ReplaceStringInFile@v1.3
+        with:
+          path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
+          oldString: "{{EXCHANGE_EMAIL_NOREPLY_PASSWORD}}"
+          newString: "${{secrets.EXCHANGE_EMAIL_NOREPLY_PASSWORD}}"
           showFileContent: true
 
       - name: Build with dotnet
