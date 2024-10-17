@@ -7,6 +7,11 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="appsettings.development.json" Condition="'$(Configuration)'=='DEBUG'" />
+		<EmbeddedResource Remove="appsettings.json" Condition="'$(Configuration)'=='DEBUG'" />
+	</ItemGroup>
+
+	<ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.2" />
     <PackageReference Include="MongoDB.Bson" Version="2.28.0" />
@@ -18,11 +23,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Extensions.Web\Extensions.Web.csproj" />
 	  <ProjectReference Include="..\Models\Models.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Include="appsettings.development.json" Condition="'$(Configuration)'=='DEBUG'" />
-		<EmbeddedResource Remove="appsettings.json" Condition="'$(Configuration)'=='DEBUG'" />
 	</ItemGroup>
 	
 </Project>
