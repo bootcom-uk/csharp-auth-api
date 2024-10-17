@@ -83,7 +83,6 @@ namespace API.Controllers
                 new Claim(JwtRegisteredClaimNames.Aud, audience)
             };
 
-            
 
             var creds = new SigningCredentials(new RsaSecurityKey(privateKey), SecurityAlgorithms.RsaSha256);
 

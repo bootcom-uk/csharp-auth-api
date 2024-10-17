@@ -12,16 +12,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-var appsettingsFile = null as string;
+var assembly = Assembly.GetExecutingAssembly();
+var stream = null as Stream;
 
 #if DEBUG
-appsettingsFile = "appsettings.Development.json";
+stream = assembly.GetManifestResourceStream("API.appsettings.development.json");
+
 #else
-    appsettingsFile= "appsettings.json";
+            stream = assembly.GetManifestResourceStream("API.appsettings.json");
 #endif
 
-var configurationBuilder = builder.Configuration.AddJsonFile(appsettingsFile);
+var configurationBuilder = builder.Configuration.AddJsonStream(stream);
 
 var apiConfiguration = configurationBuilder.Build().Get<APIConfiguration>();
 
