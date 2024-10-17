@@ -49,7 +49,7 @@ jobs:
         uses: Nambers/ReplaceStringInFile@v1.3
         with:
           path: "D:\\\\a\\\\csharp-auth-api\\\\csharp-auth-api\\\\api\\\\appsettings.json"
-          oldString: "{{JWT_AUDIENCE}}"
+          oldString: "\"{{JWT_AUDIENCE}}\""
           newString: "${{secrets.JWT_AUDIENCE}}"
           showFileContent: true
 
