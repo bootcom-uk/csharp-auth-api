@@ -22,8 +22,7 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GenerateAccessCode([FromRoute] string audience, [FromForm] string emailAddress, [FromForm] string deviceId)
         {
-            var validAudiences = new List<string> { "audience1", "audience2", "audience3" };
-            if (!validAudiences.Contains(audience))
+            if (!_configuration.TokenConfigurationSection.Audience.Contains(audience))
             {
                 return BadRequest("Invalid audience.");
             }
