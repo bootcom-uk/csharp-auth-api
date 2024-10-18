@@ -68,7 +68,8 @@ namespace API.Controllers
             return Ok(new
             {
                 JwtToken = jwtToken,
-                RefreshToken = refreshToken.Token
+                RefreshToken = refreshToken.Token,
+                UserId = userId
             });
         }
 

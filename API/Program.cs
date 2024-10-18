@@ -46,6 +46,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     var connectionString = apiConfiguration!.MongoConfigurationSection.Connectionstring;
     return new MongoClient(connectionString);
 });
+
 builder.Services.AddSingleton<MongoDatabaseService>();
 builder.Services.AddSingleton<EmailProviderService>();
 
