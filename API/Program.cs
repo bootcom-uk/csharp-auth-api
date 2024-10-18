@@ -63,7 +63,7 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidIssuer = "YourIssuer",
+        ValidIssuer = apiConfiguration.TokenConfigurationSection.Issuer,
         IssuerSigningKey = new RsaSecurityKey(publicKey), // Use the public key for validation
         ValidateIssuerSigningKey = true,
         ClockSkew = TimeSpan.Zero
