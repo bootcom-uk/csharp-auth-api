@@ -11,9 +11,8 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="appsettings.development.json" Condition="'$(Configuration)'=='DEBUG'" />
-		<EmbeddedResource Include="appsettings.json" />
-		<EmbeddedResource Remove="appsettings.json" Condition="'$(Configuration)'=='DEBUG'" />
+		<EmbeddedResource Include="appsettings.development.json" Condition="'$(Configuration)'=='DEBUG'" />		
+		<EmbeddedResource Include="appsettings.json" Condition="'$(Configuration)'=='RELEASE'"  />		
 	</ItemGroup>
 
 	<ItemGroup>
