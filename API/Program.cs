@@ -76,6 +76,7 @@ builder.Services.AddAuthentication(options =>
         {
             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
             {
+                context.Response.Headers.Append("AuthEx", context.Exception.ToString());
                 context.Response.Headers.Append("Token-Expired", "true");
             }
             return Task.CompletedTask;
