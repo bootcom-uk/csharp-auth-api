@@ -47,8 +47,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     return new MongoClient(connectionString);
 });
 builder.Services.AddSingleton<MongoDatabaseService>();
-builder.Services.AddScoped<EmailProviderService>();
-
+builder.Services.AddSingleton<EmailProviderService>();
 
 
 var publicKey = RSA.Create();
