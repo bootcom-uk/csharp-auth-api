@@ -16,13 +16,10 @@ namespace API.Controllers
 
         internal readonly APIConfiguration _configuration;
 
-        internal readonly EmailProviderService _emailProviderService;
-
-        public BaseController(MongoDatabaseService databaseService, IConfiguration configuration, EmailProviderService emailProviderService)
+        public BaseController(MongoDatabaseService databaseService, IConfiguration configuration)
         {
             _databaseService = databaseService;
             _configuration = configuration.Get<APIConfiguration>()!;
-            _emailProviderService = emailProviderService;
         }
 
     }

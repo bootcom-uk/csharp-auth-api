@@ -14,7 +14,5 @@ namespace API.Configuration
         [ConfigurationKeyName("token")]
         public required TokenConfiguration TokenConfigurationSection { get; set; }
 
-        [ConfigurationKeyName("email")]
-        public required EmailConfiguration EmailConfigurationSection { get; set; }
     }
 }

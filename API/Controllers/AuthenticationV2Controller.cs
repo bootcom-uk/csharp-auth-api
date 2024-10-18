@@ -15,7 +15,7 @@ namespace API.Controllers
     {
 
 
-        public AuthenticationV2Controller(MongoDatabaseService databaseService, IConfiguration configuration, EmailProviderService emailProviderService) : base(databaseService, configuration, emailProviderService)
+        public AuthenticationV2Controller(MongoDatabaseService databaseService, IConfiguration configuration) : base(databaseService, configuration)
         {
         }
 
@@ -35,18 +35,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            var accessCodeRequest = await _databaseService.StoreAccessCodeAsync(user, deviceId, audience);
-
-
-            await _emailProviderService.Send(_configuration.EmailConfigurationSection.EmailFrom, "Login To BootCom", _configuration.EmailConfigurationSection.LoginTemplate, new Dictionary<string, string>()
-            {
-                { "{{BASE_URL}}", _configuration.EmailConfigurationSection.LoginBaseURL },
-                { "{{ACCESS_CODE}}", accessCodeRequest!.QuickAccessCode},
-                { "{{LOGIN_CODE}}", accessCodeRequest!.LoginCode.ToString()}
-            }, new List<Exchange365EmailRecipient>()
-            {
-                { new() { Contact = emailAddress, Name = emailAddress} }
-            });
+            await _databaseService.StoreAccessCodeAsync(user, deviceId, audience);
 
             return NoContent();
         }

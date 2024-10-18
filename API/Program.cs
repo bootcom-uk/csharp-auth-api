@@ -48,8 +48,6 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 });
 
 builder.Services.AddSingleton<MongoDatabaseService>();
-builder.Services.AddSingleton<EmailProviderService>();
-
 
 var publicKey = RSA.Create();
 publicKey.ImportSubjectPublicKeyInfo(Convert.FromBase64String(apiConfiguration!.TokenConfigurationSection.PublicKey!), out _);
