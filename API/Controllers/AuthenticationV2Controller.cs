@@ -1,4 +1,5 @@
-﻿using API.Communication;
+﻿using Amazon.Runtime;
+using API.Communication;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,12 @@ namespace API.Controllers
                 { new() { Contact = emailAddress, Name = emailAddress} }
             });
 
+            return NoContent();
+        }
+
+        [HttpGet("verify-token-validity")]
+        public IActionResult VerifyTokenValidity()
+        {
             return NoContent();
         }
 
@@ -115,10 +122,11 @@ namespace API.Controllers
             var newJwtToken = GenerateJwtToken(refreshTokenDoc.UserId, refreshTokenDoc.Audience);
             var newRefreshToken = await _databaseService.StoreRefreshTokenAsync(userId, deviceId, refreshTokenDoc.Audience);
 
-            return Ok(new
+            return Ok(new Dictionary<string, string>()
             {
-                JwtToken = newJwtToken,
-                RefreshToken = newRefreshToken
+                { "JwtToken", newJwtToken },
+                { "RefreshToken", newRefreshToken.Token },
+                { "UserId", userId.ToString() }
             });
         }
 
