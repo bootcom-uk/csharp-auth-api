@@ -6,8 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="appsettings.json" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<EmbeddedResource Include="appsettings.development.json" Condition="'$(Configuration)'=='DEBUG'" />
+		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Remove="appsettings.json" Condition="'$(Configuration)'=='DEBUG'" />
 	</ItemGroup>
 
