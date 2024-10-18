@@ -65,11 +65,11 @@ namespace API.Controllers
             var jwtToken = GenerateJwtToken(userId, accessCodeRecord.Audience);
             var refreshToken = await _databaseService.StoreRefreshTokenAsync(userId, deviceId, accessCodeRecord.Audience);
 
-            return Ok(new
+            return Ok(new Dictionary<string, string>()
             {
-                JwtToken = jwtToken,
-                RefreshToken = refreshToken.Token,
-                UserId = userId
+                { "JwtToken", jwtToken },
+                { "RefreshToken", refreshToken.Token },
+                { "UserId", userId.ToString() }
             });
         }
 
