@@ -1,13 +1,11 @@
-﻿using Amazon.Runtime;
-using API.Communication;
-using API.Services;
+﻿using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
 
 namespace API.Controllers
 {
@@ -17,6 +15,7 @@ namespace API.Controllers
 
         public AuthenticationV2Controller(MongoDatabaseService databaseService, IConfiguration configuration) : base(databaseService, configuration)
         {
+            
         }
 
         [HttpPost("generate-access-code/{audience}")]
@@ -71,25 +70,25 @@ namespace API.Controllers
 
         private string GenerateJwtToken(ObjectId userId, string audience)
         {
-            var privateKey = RSA.Create();
-            privateKey.ImportPkcs8PrivateKey(Convert.FromBase64String(_configuration!.TokenConfigurationSection.PrivateKey!), out _);
+            var privateKey = PemUtils.ImportPrivateKey(_configuration!.TokenConfigurationSection.PrivateKey!);
 
-            var claims = new List<Claim>()
+            var claims = new Dictionary<string, object>()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Aud, audience)
+                { JwtRegisteredClaimNames.Sub, userId.ToString() }
             };
 
 
             var creds = new SigningCredentials(new RsaSecurityKey(privateKey), SecurityAlgorithms.RsaSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration.TokenConfigurationSection!.Issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15),
-                signingCredentials: creds
-            );
+
+            var token = new JwtSecurityTokenHandler().CreateToken(new SecurityTokenDescriptor()
+            {
+                Issuer = _configuration.TokenConfigurationSection!.Issuer,
+                Audience = audience,
+                Claims = claims,
+                Expires = DateTime.UtcNow.AddMinutes(15),
+                SigningCredentials = creds
+            });
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

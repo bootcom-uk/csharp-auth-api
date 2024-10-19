@@ -1,9 +1,15 @@
+using API;
 using API.Configuration;
 using API.Interfaces;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -44,13 +50,11 @@ builder.WebHost.UseSentry(options =>
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var connectionString = apiConfiguration!.MongoConfigurationSection.Connectionstring;
+    BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
     return new MongoClient(connectionString);
 });
 
 builder.Services.AddSingleton<MongoDatabaseService>();
-
-var publicKey = RSA.Create();
-publicKey.ImportSubjectPublicKeyInfo(Convert.FromBase64String(apiConfiguration!.TokenConfigurationSection.PublicKey!), out _);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -59,25 +63,34 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidIssuer = apiConfiguration.TokenConfigurationSection.Issuer,
-        IssuerSigningKey = new RsaSecurityKey(publicKey), // Use the public key for validation
+        ValidAudiences = apiConfiguration!.TokenConfigurationSection.Audience,
+        ValidIssuer = apiConfiguration!.TokenConfigurationSection.Issuer,
+
+        IssuerSigningKey = new RsaSecurityKey(PemUtils.ImportPublicKey(apiConfiguration.TokenConfigurationSection.PublicKey!)),
+
         ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
+
     };
 
     // Custom handling for invalid tokens
     options.Events = new JwtBearerEvents
-    {
+    {        
         OnAuthenticationFailed = context =>
         {
             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
             {
-                context.Response.Headers.Append("AuthEx", context.Exception.ToString());
-                context.Response.Headers.Append("Token-Expired", "true");
+                if (context.Response.Headers.Count(record => record.Key == "Token-Expired") == 0)
+                {
+                    context.Response.Headers.Append("Token-Expired", "true");
+                }
             }
             return Task.CompletedTask;
         }
@@ -87,7 +100,38 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+      {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+              {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+              },
+              Scheme = "oauth2",
+              Name = "Bearer",
+              In = ParameterLocation.Header,
+
+            },
+            new List<string>()
+          }
+        });
+});
 
 var app = builder.Build();
 
@@ -96,6 +140,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
 }
 
 app.UseHttpsRedirection();
