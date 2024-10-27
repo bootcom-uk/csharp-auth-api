@@ -33,6 +33,11 @@ namespace API.Controllers
             {
                 return NotFound();
             }
+            
+            if(user.Apps is null || user.Apps.FirstOrDefault(record => record.AppName == audience) is null)
+            {
+                return Unauthorized("You do not have permission to access this app");
+            }
 
             await _databaseService.StoreAccessCodeAsync(user, deviceId, audience);
 
@@ -57,7 +62,7 @@ namespace API.Controllers
 
             var userId = accessCodeRecord.UserId;
 
-            var jwtToken = GenerateJwtToken(userId, accessCodeRecord.Audience);
+            var jwtToken = await GenerateJwtToken(userId, accessCodeRecord.Audience);
             var refreshToken = await _databaseService.StoreRefreshTokenAsync(userId, deviceId, accessCodeRecord.Audience);
 
             return Ok(new Dictionary<string, string>()
@@ -68,13 +73,16 @@ namespace API.Controllers
             });
         }
 
-        private string GenerateJwtToken(ObjectId userId, string audience)
+        private async Task<string> GenerateJwtToken(ObjectId userId, string audience)
         {
             var privateKey = PemUtils.ImportPrivateKey(_configuration!.TokenConfigurationSection.PrivateKey!);
 
+            var user = await _databaseService.GetUserById(userId);
+            
             var claims = new Dictionary<string, object>()
             {
-                { JwtRegisteredClaimNames.Sub, userId.ToString() }
+                { JwtRegisteredClaimNames.Sub, userId.ToString() },
+                { "Permissions", string.Join(",", user!.Apps.First(record => record.AppName == audience).Permissions) },
             };
 
 
@@ -107,7 +115,7 @@ namespace API.Controllers
 
             var userId = refreshTokenDoc.UserId;
 
-            var newJwtToken = GenerateJwtToken(refreshTokenDoc.UserId, refreshTokenDoc.Audience);
+            var newJwtToken = await GenerateJwtToken(refreshTokenDoc.UserId, refreshTokenDoc.Audience);
             var newRefreshToken = await _databaseService.StoreRefreshTokenAsync(userId, deviceId, refreshTokenDoc.Audience);
 
             return Ok(new Dictionary<string, string>()

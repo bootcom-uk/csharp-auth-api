@@ -21,5 +21,7 @@ namespace API.Models
 
         public DateTime? DateCreated { get; set; }
 
+        public IList<UserApp> Apps { get; set; }
+
     }
 }

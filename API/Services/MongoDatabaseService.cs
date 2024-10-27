@@ -22,6 +22,12 @@ namespace API.Services
             _usersCollection = _database.GetCollection<User>("User");
         }
 
+        public async Task<Models.User?> GetUserById(ObjectId userId)
+        {
+            var users = await _usersCollection.FindAsync(record => record.Id == userId);
+            return users.FirstOrDefault();
+        }
+
         public async Task<Models.User?> GetUserByEmailAddress(string emailAddress)
         {
             var users = await _usersCollection.FindAsync(record => record.EmailAddress == emailAddress);
