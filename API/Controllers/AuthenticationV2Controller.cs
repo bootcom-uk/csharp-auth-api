@@ -18,6 +18,13 @@ namespace API.Controllers
             
         }
 
+        [HttpGet("public-key")]
+        [AllowAnonymous]
+        public ActionResult<string> GetPublicKey()
+        {
+            return Ok(_configuration!.TokenConfigurationSection.PublicKey!);
+        }
+
         [HttpPost("generate-access-code/{audience}")]
         [AllowAnonymous]
         public async Task<IActionResult> GenerateAccessCode([FromRoute] string audience, [FromForm] string emailAddress, [FromForm] string deviceId)
