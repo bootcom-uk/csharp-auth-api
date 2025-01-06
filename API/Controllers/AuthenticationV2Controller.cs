@@ -6,6 +6,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
 using System.IdentityModel.Tokens.Jwt;
+using API.Attributes;
 
 namespace API.Controllers
 {
@@ -23,6 +24,33 @@ namespace API.Controllers
         public ActionResult<string> GetPublicKey()
         {
             return Ok(_configuration!.TokenConfigurationSection.PublicKey!);
+        }
+
+        [HttpPost("service_token")]
+        [RequiresPermission("ADMIN")]
+        public IActionResult GenerateServiceToken()
+        {
+            var privateKey = PemUtils.ImportPrivateKey(_configuration!.TokenConfigurationSection.PrivateKey!);
+
+            var claims = new Dictionary<string, object>()
+            {
+                { JwtRegisteredClaimNames.Sub, "SERVICE_ACCOUNT" },
+                { "Permissions", "SERVICE_PERMISSION" },
+            };
+
+            var creds = new SigningCredentials(new RsaSecurityKey(privateKey), SecurityAlgorithms.RsaSha256);
+
+
+            var token = new JwtSecurityTokenHandler().CreateToken(new SecurityTokenDescriptor()
+            {
+                Issuer = _configuration.TokenConfigurationSection!.Issuer,
+                Audience = "BOOTCOM_SERVICE_ACCOUNT",
+                Claims = claims,
+                Expires = DateTime.UtcNow.AddYears(15),
+                SigningCredentials = creds
+            });
+
+            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
         [HttpPost("generate-access-code/{audience}")]
