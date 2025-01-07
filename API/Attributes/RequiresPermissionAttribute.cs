@@ -17,7 +17,7 @@ namespace API.Attributes
         {
             // Get the permissions claim from the user
             var user = context.HttpContext.User;
-            var permissionsClaim = user.FindFirst("permissions")?.Value;
+            var permissionsClaim = user.FindFirst("Permissions")?.Value;
 
             if (string.IsNullOrEmpty(permissionsClaim) || !permissionsClaim.Split(',').Contains(_requiredPermission))
             {
